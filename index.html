@@ -373,8 +373,8 @@ table.datatable tr:hover td{background:#FBFAF5;}
   .section-head .btn-primary{white-space:nowrap;}
 
   #ownerScreen{padding:16px !important;}
-  #supportFabWrap{bottom:76px;}
-  .ai-chat-panel{bottom:76px;}
+  #supportFabWrap{bottom:92px;}
+  .ai-chat-panel{bottom:92px;}
 }
 </style>
 </head>
@@ -1163,6 +1163,9 @@ function enterApp(){
 document.getElementById('logoutBtn').addEventListener('click', async ()=>{
   await sb.auth.signOut();
   currentUser = null; currentStore = null; data = null;
+  aiChatHistory = [];
+  document.getElementById('aiChatMessages').innerHTML = '';
+  document.getElementById('aiChatPanel').classList.remove('show');
   document.getElementById('loginScreen').style.display = 'flex';
   setLoginMode('login');
 });
@@ -3062,7 +3065,19 @@ const AI_SYSTEM_PROMPT = `أنت مساعد ذكي داخل نظام "أنجاز
 - وضع الطوارئ: لو انقطع النت أثناء الشغل، الكاشير يكمل يبيع عادي والفواتير تتحفظ بالجهاز وترفع تلقائيًا لما يرجع النت (لازم نت أول مرة تسجّل دخول).
 - الدعم الفني: واتساب 0509749811.
 
-لو سُئلت عن شي مو موجود بالنظام، قول بصراحة إنه مو متوفر حاليًا. لا تختلق ميزات غير موجودة.`;
+لو سُئلت عن شي مو موجود بالنظام، قول بصراحة إنه مو متوفر حاليًا. لا تختلق ميزات غير موجودة.
+
+مهم جدًا: أنت مخصص فقط للإجابة عن أسئلة تخص نظام أنجاز (الكاشير والمخزون) وكيفية استخدامه. لو المستخدم سأل عن أي موضوع عام مالة علاقة بأنجاز (برمجة، أخبار، أسئلة شخصية، مواضيع عامة...)، اعتذر بأدب وذكّره إنك مخصص لمساعدته بنظام أنجاز بس، وما ترد على السؤال العام.`;
+
+function aiHistoryKey(){
+  return 'anjaz-ai-chat-'+(currentUser && currentUser.email ? currentUser.email.toLowerCase() : 'guest');
+}
+function loadAiHistory(){
+  try{ return JSON.parse(localStorage.getItem(aiHistoryKey())||'[]'); }catch(e){ return []; }
+}
+function saveAiHistory(){
+  try{ localStorage.setItem(aiHistoryKey(), JSON.stringify(aiChatHistory)); }catch(e){}
+}
 
 let aiChatHistory = [];
 
@@ -3074,7 +3089,13 @@ document.getElementById('openAiSupportBtn').addEventListener('click', ()=>{
   }
   document.getElementById('aiChatPanel').classList.add('show');
   if(aiChatHistory.length===0){
-    addAiMessage('system-note', 'مرحبًا! اسألني عن أي شي بنظام أنجاز.');
+    aiChatHistory = loadAiHistory();
+    const wrap = document.getElementById('aiChatMessages');
+    if(aiChatHistory.length===0){
+      addAiMessage('system-note', 'مرحبًا! اسألني عن أي شي بنظام أنجاز.');
+    } else {
+      aiChatHistory.forEach(m=> addAiMessage(m.role==='user'?'user':'assistant', m.content));
+    }
   }
 });
 document.getElementById('closeAiChatBtn').addEventListener('click', ()=>{
@@ -3098,6 +3119,7 @@ async function sendAiMessage(){
   input.value = '';
   addAiMessage('user', text);
   aiChatHistory.push({role:'user', content:text});
+  saveAiHistory();
   const loadingEl = addAiMessage('assistant', '...');
 
   try{
@@ -3120,14 +3142,17 @@ async function sendAiMessage(){
     if(!res.ok){
       loadingEl.textContent = 'صار خطأ: '+(json.error?.message || 'تأكد من صحة مفتاح API بالإعدادات');
       aiChatHistory.pop();
+      saveAiHistory();
       return;
     }
     const replyText = (json.content||[]).map(b=>b.text||'').join('').trim() || 'ما قدرت أرد، جرب مرة ثانية.';
     loadingEl.textContent = replyText;
     aiChatHistory.push({role:'assistant', content:replyText});
+    saveAiHistory();
   }catch(e){
     loadingEl.textContent = 'تعذّر الاتصال بالمساعد الذكي: '+readableError(e);
     aiChatHistory.pop();
+    saveAiHistory();
   }
 }
 document.getElementById('aiChatSendBtn').addEventListener('click', sendAiMessage);
