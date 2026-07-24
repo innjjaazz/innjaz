@@ -308,27 +308,6 @@ table.datatable tr:hover td{background:#FBFAF5;}
 }
 .support-menu-item:hover{background:var(--paper-2);}
 
-.ai-chat-panel{
-  display:none;position:fixed;bottom:22px;left:22px;z-index:70;
-  width:340px;max-width:calc(100vw - 40px);height:460px;max-height:calc(100vh - 100px);
-  background:var(--white);border-radius:16px;box-shadow:0 10px 34px rgba(0,0,0,.28);
-  flex-direction:column;overflow:hidden;
-}
-.ai-chat-panel.show{display:flex;}
-.ai-chat-header{
-  background:var(--ink);color:#fff;padding:12px 16px;font-size:14px;font-weight:700;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.ai-chat-header button{color:#fff;font-size:20px;line-height:1;padding:0 4px;}
-.ai-chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;}
-.ai-msg{max-width:85%;padding:9px 13px;border-radius:12px;font-size:13px;line-height:1.7;}
-.ai-msg.user{align-self:flex-start;background:var(--paper-2);color:var(--ink-text);}
-.ai-msg.assistant{align-self:flex-end;background:var(--emerald);color:#fff;}
-.ai-msg.system-note{align-self:center;color:var(--muted);font-size:12px;text-align:center;}
-.ai-chat-input-row{display:flex;gap:8px;padding:10px;border-top:1px solid var(--paper-line);}
-.ai-chat-input-row input{flex:1;height:38px;border:1px solid var(--paper-line);border-radius:9px;padding:0 12px;font-size:13px;outline:none;}
-.ai-chat-input-row button{height:38px;padding:0 16px;border-radius:9px;background:var(--emerald);color:#fff;font-weight:700;font-size:13px;}
-
 @media (max-width:880px){
   .pos-layout{flex-direction:column;}
   .receipt-wrap{width:100%;position:static;}
@@ -374,7 +353,6 @@ table.datatable tr:hover td{background:#FBFAF5;}
 
   #ownerScreen{padding:16px !important;}
   #supportFabWrap{bottom:92px;}
-  .ai-chat-panel{bottom:92px;}
 
   .receipt{padding:16px 14px 12px;}
   .chip{padding:6px 12px;font-size:12px;}
@@ -391,7 +369,6 @@ table.datatable tr:hover td{background:#FBFAF5;}
   .sidebar{padding-bottom:calc(6px + env(safe-area-inset-bottom));}
   .main{padding-bottom:calc(66px + env(safe-area-inset-bottom));}
   #supportFabWrap{bottom:calc(92px + env(safe-area-inset-bottom));}
-  .ai-chat-panel{bottom:calc(92px + env(safe-area-inset-bottom));}
 }
 
 /* ---- Extra-small phones (older/compact devices) ---- */
@@ -403,7 +380,6 @@ table.datatable tr:hover td{background:#FBFAF5;}
   .navbtn span{font-size:8px;}
   .grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));}
   .metrics{grid-template-columns:1fr 1fr;gap:8px;}
-  .ai-chat-panel{width:100%;left:0;right:0;max-width:100vw;border-radius:16px 16px 0 0;}
   #supportFabWrap{left:14px;}
 }
 </style>
@@ -458,6 +434,14 @@ table.datatable tr:hover td{background:#FBFAF5;}
     <button class="navbtn" data-view="customers">
       <svg viewBox="0 0 24 24"><path d="M17 20v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2M10 10a4 4 0 100-8 4 4 0 000 8zM23 20v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
       <span>العملاء</span>
+    </button>
+    <button class="navbtn" data-view="suppliers">
+      <svg viewBox="0 0 24 24"><path d="M3 3h18M3 3v9a1 1 0 001 1h1M21 3v9a1 1 0 01-1 1h-1M8 21V13h8v8M3 13h18M6 21h12"/></svg>
+      <span>الموردين</span>
+    </button>
+    <button class="navbtn" data-view="expenses">
+      <svg viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      <span>المصروفات</span>
     </button>
     <button class="navbtn" data-view="reports">
       <svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>
@@ -652,6 +636,45 @@ table.datatable tr:hover td{background:#FBFAF5;}
       </table>
     </div>
 
+    <!-- SUPPLIERS VIEW -->
+    <div class="view" id="view-suppliers">
+      <div class="section-head">
+        <h2>الموردين</h2>
+        <button class="btn-primary" id="addSupplierBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 5v14M5 12h14"/></svg>
+          إضافة مورد
+        </button>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="mlabel">عدد الموردين</div><div class="mval" id="mSupCount">0</div></div>
+        <div class="metric gold"><div class="mlabel">إجمالي اللي باقي عليك لهم</div><div class="mval" id="mSupDebt">0.00 ر.س</div></div>
+      </div>
+      <table class="datatable">
+        <thead><tr><th>المورد</th><th>الجوال</th><th>الرصيد</th><th></th></tr></thead>
+        <tbody id="suppliersBody"></tbody>
+      </table>
+    </div>
+
+    <!-- EXPENSES VIEW -->
+    <div class="view" id="view-expenses">
+      <div class="section-head">
+        <h2>المصروفات</h2>
+        <button class="btn-primary" id="addExpenseBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 5v14M5 12h14"/></svg>
+          إضافة مصروف
+        </button>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="mlabel">مصروفات هذا الشهر</div><div class="mval" id="mExpMonth">0.00 ر.س</div></div>
+        <div class="metric"><div class="mlabel">إجمالي كل المصروفات</div><div class="mval" id="mExpAll">0.00 ر.س</div></div>
+        <div class="metric gold"><div class="mlabel">صافي الربح (مبيعات الشهر - مصروفاته)</div><div class="mval" id="mNetProfit">0.00 ر.س</div></div>
+      </div>
+      <table class="datatable">
+        <thead><tr><th>التاريخ</th><th>النوع</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead>
+        <tbody id="expensesBody"></tbody>
+      </table>
+    </div>
+
     <!-- REPORTS VIEW -->
     <div class="view" id="view-reports">
       <div class="section-head"><h2>تقارير المبيعات</h2></div>
@@ -781,27 +804,9 @@ table.datatable tr:hover td{background:#FBFAF5;}
         </button>
       </div>
       <table class="datatable" style="margin-bottom:26px;">
-        <thead><tr><th>الأيقونة</th><th>اسم الفئة</th><th></th></tr></thead>
+        <thead><tr><th>اسم الفئة</th><th></th></tr></thead>
         <tbody id="categoriesBody"></tbody>
       </table>
-
-      <div class="section-head"><h2>المساعد الذكي (اختياري)</h2></div>
-      <div class="chart-card">
-        <div class="field">
-          <label>مفتاح Anthropic API الخاص بك</label>
-          <input id="s-aiApiKey" type="password" placeholder="sk-ant-...">
-        </div>
-        <div class="field">
-          <label>اسم الموديل</label>
-          <input id="s-aiModel" placeholder="claude-3-5-haiku-20241022">
-        </div>
-        <button class="btn-primary" id="saveAiSettingsBtn" style="justify-content:center;">حفظ إعدادات المساعد الذكي</button>
-        <p style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.8;">
-          هذا مفتاحك الخاص من حسابك بـ Anthropic (console.anthropic.com) - الاستخدام يتحاسب على حسابك أنت مباشرة.
-          <b>مهم:</b> أي موظف مسجّل دخول بحساب هذا المتجر يقدر يشوف هذا المفتاح من أدوات المطوّر بالمتصفح (Network tab)،
-          فلا تحطه إلا لو مرتاح لهذا. لو ما بغيت تفعّل المساعد الذكي، خلّه فاضي وزر الدعم بيعرض واتساب بس.
-        </p>
-      </div>
 
       <div class="section-head"><h2>الطابعة الحرارية</h2></div>
       <div class="chart-card">
@@ -850,18 +855,6 @@ table.datatable tr:hover td{background:#FBFAF5;}
   <button type="button" class="support-fab" id="supportFab" title="الدعم">
     <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="2"><path d="M12 18h.01M9.09 9a3 3 0 015.83 1c0 2-3 2-3 5"/><circle cx="12" cy="12" r="10"/></svg>
   </button>
-</div>
-
-<div id="aiChatPanel" class="ai-chat-panel">
-  <div class="ai-chat-header">
-    <span>🤖 المساعد الذكي - أنجاز</span>
-    <button type="button" id="closeAiChatBtn">×</button>
-  </div>
-  <div id="aiChatMessages" class="ai-chat-messages"></div>
-  <div class="ai-chat-input-row">
-    <input type="text" id="aiChatInput" placeholder="اسأل عن أي شي بالنظام...">
-    <button type="button" id="aiChatSendBtn">إرسال</button>
-  </div>
 </div>
 
 <div id="printArea"></div>
@@ -1047,6 +1040,7 @@ setInterval(refreshStoreStatus, 30000);
 function defaultData(){
   return {
     products:[], sales:[], customers:[], ledger:[], heldOrders:[], users:[], categories:[],
+    suppliers:[], supplierLedger:[], expenses:[],
     vatEnabled:true,
     branches:[],
     settings:{storeName:'', vatNumber:'', crNumber:'', phone:'', address:'', printerWidth:384},
@@ -1073,14 +1067,17 @@ async function loadStoreData(){
     receiptNoteFooter: currentStore.receipt_note_footer || ''
   };
 
-  const [branchesRes, productsRes, customersRes, salesRes, ledgerRes, profilesRes, categoriesRes] = await Promise.all([
+  const [branchesRes, productsRes, customersRes, salesRes, ledgerRes, profilesRes, categoriesRes, suppliersRes, supplierLedgerRes, expensesRes] = await Promise.all([
     sb.from('branches').select('*').eq('store_id', storeId).order('created_at'),
     sb.from('products').select('*').eq('store_id', storeId).order('created_at'),
     sb.from('customers').select('*').eq('store_id', storeId).order('created_at'),
     sb.from('sales').select('*').eq('store_id', storeId).order('number'),
     sb.from('ledger').select('*').eq('store_id', storeId).order('created_at'),
     sb.from('profiles').select('*').eq('store_id', storeId).order('created_at'),
-    sb.from('categories').select('*').eq('store_id', storeId).order('created_at')
+    sb.from('categories').select('*').eq('store_id', storeId).order('created_at'),
+    sb.from('suppliers').select('*').eq('store_id', storeId).order('created_at'),
+    sb.from('supplier_ledger').select('*').eq('store_id', storeId).order('created_at'),
+    sb.from('expenses').select('*').eq('store_id', storeId).order('expense_date', {ascending:false})
   ]);
 
   data.branches = (branchesRes.data||[]).map(b=>({id:b.id, name:b.name, location:b.location}));
@@ -1100,6 +1097,9 @@ async function loadStoreData(){
     const seeded = await seedCategories(storeId, 'أخرى');
     data.categories = seeded;
   }
+  data.suppliers = (suppliersRes.data||[]).map(s=>({id:s.id, name:s.name, phone:s.phone||'', balance:Number(s.balance)||0}));
+  data.supplierLedger = (supplierLedgerRes.data||[]).map(l=>({id:l.id, supplierId:l.supplier_id, type:l.type, amount:Number(l.amount), date:l.created_at, note:l.note}));
+  data.expenses = (expensesRes.data||[]).map(e=>({id:e.id, type:e.type, amount:Number(e.amount), note:e.note, date:e.expense_date}));
 
   const prefs = loadLocalPrefs();
   data.vatEnabled = prefs.vatEnabled !== undefined ? prefs.vatEnabled : true;
@@ -1130,7 +1130,7 @@ function money(n){
 
 /* ---------- Auth ---------- */
 const ROLE_PERMISSIONS = {
-  admin: ['pos','inventory','stocktake','customers','reports','users','settings'],
+  admin: ['pos','inventory','stocktake','customers','suppliers','expenses','reports','users','settings'],
   supervisor: ['pos','inventory','stocktake'],
   cashier: ['pos']
 };
@@ -1167,7 +1167,7 @@ function setLoginMode(mode){
   document.getElementById('loginNameField').style.display = mode==='signup' ? 'block' : 'none';
   document.getElementById('loginStoreField').style.display = mode==='signup' ? 'block' : 'none';
   document.getElementById('loginBusinessTypeField').style.display = mode==='signup' ? 'block' : 'none';
-  document.getElementById('loginBtn').textContent = mode==='signup' ? 'إنشاء حساب مدير' : 'دخول';
+  document.getElementById('loginBtn').textContent = mode==='signup' ? 'إنشاء حساب جديد' : 'دخول';
   document.getElementById('loginError').style.display = 'none';
 }
 document.querySelectorAll('#loginTabs button').forEach(b=>{
@@ -1311,8 +1311,8 @@ function enterApp(){
 const TRIAL_LOCK_BUTTON_IDS = [
   'checkoutBtn','holdOrderBtn','printLastBtn',
   'addProductBtn','startStocktakeBtn','finishStocktakeBtn',
-  'addCustomerBtn','addBranchBtn','addUserBtn',
-  'saveStoreSettingsBtn','saveAiSettingsBtn',
+  'addCustomerBtn','addBranchBtn','addUserBtn','addSupplierBtn','addExpenseBtn',
+  'saveStoreSettingsBtn',
   'connectUsbPrinterBtn','connectBtPrinterBtn','testPrintBtn'
 ];
 
@@ -1377,9 +1377,6 @@ function updateTrialBanner(){
 document.getElementById('logoutBtn').addEventListener('click', async ()=>{
   await sb.auth.signOut();
   currentUser = null; currentStore = null; data = null;
-  aiChatHistory = [];
-  document.getElementById('aiChatMessages').innerHTML = '';
-  document.getElementById('aiChatPanel').classList.remove('show');
   document.getElementById('trialBanner').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
   setLoginMode('login');
@@ -1558,11 +1555,13 @@ document.querySelectorAll('.navbtn').forEach(btn=>{
     btn.classList.add('active');
     document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
     document.getElementById('view-'+view).classList.add('active');
-    const titles = {pos:'الكاشير', inventory:'المخزون والمنتجات', stocktake:'الجرد', reports:'تقارير المبيعات', customers:'حسابات العملاء', users:'إدارة المستخدمين', settings:'الإعدادات'};
+    const titles = {pos:'الكاشير', inventory:'المخزون والمنتجات', stocktake:'الجرد', reports:'تقارير المبيعات', customers:'حسابات العملاء', suppliers:'الموردين', expenses:'المصروفات', users:'إدارة المستخدمين', settings:'الإعدادات'};
     document.getElementById('pageTitle').textContent = titles[view];
     if(view==='inventory') renderInventory();
     if(view==='reports') renderReports();
     if(view==='customers') renderCustomers();
+    if(view==='suppliers') renderSuppliers();
+    if(view==='expenses') renderExpenses();
     if(view==='users') renderUsers();
     if(view==='settings') renderSettingsView();
     if(view==='stocktake') renderStocktakeView();
@@ -1626,12 +1625,10 @@ function renderProductGrid(){
     return;
   }
   grid.innerHTML = list.map(p=>{
-    const emoji = (data.categories.find(c=>c.name===p.category)||{}).icon || '📦';
     const low = p.stock <= 5;
     const outOfStock = p.stock <= 0;
     return `<div class="pcard ${outOfStock?'disabled':''}" data-id="${p.id}">
       <span class="pstock ${low?'low':''}">${outOfStock?'نفد':'م: '+p.stock}</span>
-      <span class="emoji">${emoji}</span>
       <div class="pname">${p.name}</div>
       <div class="pprice">${money(p.price)} ر.س</div>
       <button class="addbtn">أضف للسلة</button>
@@ -3016,6 +3013,224 @@ function openCustomerHistory(customer){
   document.getElementById('modalCancel').addEventListener('click', closeModal);
 }
 
+/* ---------- Suppliers ---------- */
+function renderSuppliers(){
+  const totalOwed = data.suppliers.reduce((s,x)=>s+Math.max(x.balance,0),0);
+  document.getElementById('mSupCount').textContent = data.suppliers.length;
+  document.getElementById('mSupDebt').textContent = money(totalOwed)+' ر.س';
+
+  const body = document.getElementById('suppliersBody');
+  if(data.suppliers.length===0){
+    body.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--muted)">لا يوجد موردين مسجّلين بعد.</td></tr>`;
+    return;
+  }
+  body.innerHTML = data.suppliers.map(s=>{
+    let badge;
+    if(s.balance>0) badge = `<span class="badge low">باقي عليك ${money(s.balance)} ر.س</span>`;
+    else if(s.balance<0) badge = `<span class="badge ok">له رصيد ${money(Math.abs(s.balance))} ر.س</span>`;
+    else badge = `<span class="badge ok">مسدّد بالكامل</span>`;
+    return `<tr data-id="${s.id}">
+      <td>${s.name}</td>
+      <td>${s.phone||'-'}</td>
+      <td>${badge}</td>
+      <td style="white-space:nowrap;">
+        <button class="icon-btn history-btn" title="السجل">
+          <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 3v5h5M3.05 13a9 9 0 106.2-9.1"/><path d="M12 7v5l3 3"/></svg>
+        </button>
+        <button class="icon-btn add-debt-btn" title="تسجيل بضاعة/دين جديد">
+          <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/></svg>
+        </button>
+        <button class="icon-btn settle-btn" title="سند صرف (دفعة)">
+          <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </button>
+        <button class="icon-btn danger del-supplier-btn" title="حذف">
+          <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  body.querySelectorAll('tr').forEach(row=>{
+    const id = row.dataset.id;
+    const supplier = data.suppliers.find(s=>s.id===id);
+    row.querySelector('.history-btn').addEventListener('click',()=>openSupplierHistory(supplier));
+    row.querySelector('.add-debt-btn').addEventListener('click',()=>openSupplierTxnModal(supplier,'debt'));
+    row.querySelector('.settle-btn').addEventListener('click',()=>openSupplierTxnModal(supplier,'payment'));
+    row.querySelector('.del-supplier-btn').addEventListener('click', async ()=>{
+      const {error} = await sb.from('suppliers').delete().eq('id', id);
+      if(error){ showToast('صار خطأ: '+error.message); return; }
+      data.suppliers = data.suppliers.filter(s=>s.id!==id);
+      renderSuppliers();
+      showToast('تم حذف المورد');
+    });
+  });
+}
+
+document.getElementById('addSupplierBtn').addEventListener('click', ()=>{
+  const modal = document.getElementById('modalBody');
+  modal.innerHTML = `
+    <h3>إضافة مورد جديد</h3>
+    <div class="field"><label>اسم المورد</label><input id="f-supname" placeholder="مثال: مؤسسة الوفاء للتوريدات"></div>
+    <div class="field"><label>رقم الجوال (اختياري)</label><input id="f-supphone" placeholder="05xxxxxxxx"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="modalCancel">إلغاء</button>
+      <button class="btn-save" id="modalSave">إضافة المورد</button>
+    </div>
+  `;
+  document.getElementById('modalOverlay').classList.add('show');
+  document.getElementById('modalCancel').addEventListener('click', closeModal);
+  document.getElementById('modalSave').addEventListener('click', async ()=>{
+    const name = document.getElementById('f-supname').value.trim();
+    const phone = document.getElementById('f-supphone').value.trim();
+    if(!name){ showToast('يرجى إدخال اسم المورد'); return; }
+    const {data:newSup, error} = await sb.from('suppliers').insert({store_id:currentUser.storeId, name, phone, balance:0}).select().single();
+    if(error){ showToast('صار خطأ: '+error.message); return; }
+    data.suppliers.push({id:newSup.id, name:newSup.name, phone:newSup.phone||'', balance:0});
+    closeModal();
+    renderSuppliers();
+    showToast('تمت إضافة المورد');
+  });
+});
+
+function openSupplierTxnModal(supplier, type){
+  const isDebt = type==='debt';
+  const modal = document.getElementById('modalBody');
+  modal.innerHTML = `
+    <h3>${isDebt?'تسجيل بضاعة/دين جديد':'سند صرف (دفعة)'} - ${supplier.name}</h3>
+    <p style="font-size:13px;color:var(--muted);margin-top:-8px;">الرصيد الحالي: ${supplier.balance>0? 'باقي عليك '+money(supplier.balance)+' ر.س' : (supplier.balance<0? 'له رصيد '+money(Math.abs(supplier.balance))+' ر.س' : 'مسدّد بالكامل')}</p>
+    <div class="field"><label>المبلغ (ر.س)</label><input id="f-supamt" type="number" min="0" step="0.01"></div>
+    <div class="field"><label>ملاحظة (اختياري)</label><input id="f-supnote" placeholder="${isDebt?'مثال: فاتورة توريد رقم 123':'مثال: دفعة نقدية'}"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="modalCancel">إلغاء</button>
+      <button class="btn-save" id="modalSave">${isDebt?'تسجيل':'تسجيل السند'}</button>
+    </div>
+  `;
+  document.getElementById('modalOverlay').classList.add('show');
+  document.getElementById('modalCancel').addEventListener('click', closeModal);
+  document.getElementById('modalSave').addEventListener('click', async ()=>{
+    const amt = parseFloat(document.getElementById('f-supamt').value)||0;
+    const note = document.getElementById('f-supnote').value.trim() || (isDebt?'بضاعة على الحساب':'سند صرف');
+    if(amt<=0){ showToast('أدخل مبلغًا صحيحًا'); return; }
+    const newBalance = isDebt ? supplier.balance + amt : supplier.balance - amt;
+    const {error:updErr} = await sb.from('suppliers').update({balance:newBalance}).eq('id', supplier.id);
+    if(updErr){ showToast('صار خطأ: '+updErr.message); return; }
+    supplier.balance = newBalance;
+    const {data:ledRow} = await sb.from('supplier_ledger').insert({store_id:currentUser.storeId, supplier_id:supplier.id, type, amount:amt, note}).select().single();
+    if(ledRow) data.supplierLedger.push({id:ledRow.id, supplierId:ledRow.supplier_id, type:ledRow.type, amount:Number(ledRow.amount), date:ledRow.created_at, note:ledRow.note});
+    closeModal();
+    renderSuppliers();
+    showToast(isDebt?'تم تسجيل الدين':'تم تسجيل سند الصرف');
+  });
+}
+
+function openSupplierHistory(supplier){
+  const entries = data.supplierLedger.filter(l=>l.supplierId===supplier.id).slice().reverse();
+  const modal = document.getElementById('modalBody');
+  const rows = entries.length ? entries.map(e=>{
+    const d = new Date(e.date);
+    const dateStr = d.toLocaleDateString('ar-SA-u-nu-latn',{day:'numeric',month:'short'})+' - '+d.toLocaleTimeString('ar-SA-u-nu-latn',{hour:'2-digit',minute:'2-digit'});
+    const isDebt = e.type==='debt';
+    return `<div class="cart-item">
+      <div class="ci-info">
+        <div class="ci-name">${e.note}</div>
+        <div class="ci-price">${dateStr}</div>
+      </div>
+      <div class="ci-total" style="color:${isDebt?'var(--red)':'var(--emerald)'};">${isDebt?'+':'−'}${money(e.amount)}</div>
+    </div>`;
+  }).join('') : `<div class="cart-empty">لا يوجد سجل عمليات لهذا المورد بعد</div>`;
+  modal.innerHTML = `
+    <h3>سجل المورد - ${supplier.name}</h3>
+    <div class="cart-list" style="max-height:340px;">${rows}</div>
+    <div class="modal-actions"><button class="btn-cancel" id="modalCancel" style="flex:1;">إغلاق</button></div>
+  `;
+  document.getElementById('modalOverlay').classList.add('show');
+  document.getElementById('modalCancel').addEventListener('click', closeModal);
+}
+
+/* ---------- Expenses (المصروفات) ---------- */
+const EXPENSE_TYPES = ['رواتب موظفين','إيجار محل','أخرى'];
+
+function renderExpenses(){
+  const now = new Date();
+  const monthExpenses = data.expenses.filter(e=>{
+    const d = new Date(e.date);
+    return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
+  });
+  const monthTotal = monthExpenses.reduce((s,e)=>s+e.amount,0);
+  const allTotal = data.expenses.reduce((s,e)=>s+e.amount,0);
+  const monthSales = data.sales.filter(s=>{
+    const d = new Date(s.date);
+    return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
+  }).reduce((s,x)=>s+x.total,0);
+
+  document.getElementById('mExpMonth').textContent = money(monthTotal)+' ر.س';
+  document.getElementById('mExpAll').textContent = money(allTotal)+' ر.س';
+  document.getElementById('mNetProfit').textContent = money(monthSales-monthTotal)+' ر.س';
+
+  const body = document.getElementById('expensesBody');
+  if(data.expenses.length===0){
+    body.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">لا توجد مصروفات مسجّلة بعد.</td></tr>`;
+    return;
+  }
+  const list = data.expenses.slice().sort((a,b)=> new Date(b.date)-new Date(a.date));
+  body.innerHTML = list.map(e=>{
+    const d = new Date(e.date);
+    const dateStr = d.toLocaleDateString('ar-SA-u-nu-latn',{day:'numeric',month:'short',year:'numeric'});
+    return `<tr data-id="${e.id}">
+      <td>${dateStr}</td>
+      <td>${e.type}</td>
+      <td style="font-weight:700;color:var(--red);">${money(e.amount)} ر.س</td>
+      <td>${e.note||'-'}</td>
+      <td><button class="icon-btn danger del-expense-btn" title="حذف">
+        <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+      </button></td>
+    </tr>`;
+  }).join('');
+  body.querySelectorAll('.del-expense-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.closest('tr').dataset.id;
+      const {error} = await sb.from('expenses').delete().eq('id', id);
+      if(error){ showToast('صار خطأ: '+error.message); return; }
+      data.expenses = data.expenses.filter(e=>e.id!==id);
+      renderExpenses();
+      showToast('تم حذف المصروف');
+    });
+  });
+}
+
+document.getElementById('addExpenseBtn').addEventListener('click', ()=>{
+  const modal = document.getElementById('modalBody');
+  const today = new Date().toISOString().slice(0,10);
+  modal.innerHTML = `
+    <h3>إضافة مصروف</h3>
+    <div class="field"><label>النوع</label>
+      <select id="f-expType">${EXPENSE_TYPES.map(t=>`<option>${t}</option>`).join('')}</select>
+    </div>
+    <div class="field"><label>المبلغ (ر.س)</label><input id="f-expAmount" type="number" min="0" step="0.01"></div>
+    <div class="field"><label>التاريخ</label><input id="f-expDate" type="date" value="${today}"></div>
+    <div class="field"><label>ملاحظة (اختياري)</label><input id="f-expNote" placeholder="مثال: راتب شهر يوليو"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="modalCancel">إلغاء</button>
+      <button class="btn-save" id="modalSave">إضافة</button>
+    </div>
+  `;
+  document.getElementById('modalOverlay').classList.add('show');
+  document.getElementById('modalCancel').addEventListener('click', closeModal);
+  document.getElementById('modalSave').addEventListener('click', async ()=>{
+    const type = document.getElementById('f-expType').value;
+    const amount = parseFloat(document.getElementById('f-expAmount').value)||0;
+    const expense_date = document.getElementById('f-expDate').value || new Date().toISOString().slice(0,10);
+    const note = document.getElementById('f-expNote').value.trim();
+    if(amount<=0){ showToast('أدخل مبلغًا صحيحًا'); return; }
+    const {data:newExp, error} = await sb.from('expenses').insert({store_id:currentUser.storeId, type, amount, note, expense_date}).select().single();
+    if(error){ showToast('صار خطأ: '+error.message); return; }
+    data.expenses.push({id:newExp.id, type:newExp.type, amount:Number(newExp.amount), note:newExp.note, date:newExp.expense_date});
+    closeModal();
+    renderExpenses();
+    showToast('تمت إضافة المصروف');
+  });
+});
+
 /* ---------- Settings: store info + branches ---------- */
 function renderSettingsView(){
   const s = data.settings;
@@ -3025,8 +3240,6 @@ function renderSettingsView(){
   document.getElementById('s-phone').value = s.phone || '';
   document.getElementById('s-address').value = s.address || '';
   document.getElementById('s-printerWidth').value = s.printerWidth || 384;
-  document.getElementById('s-aiApiKey').value = s.aiApiKey || '';
-  document.getElementById('s-aiModel').value = s.aiModel || 'claude-3-5-haiku-20241022';
   document.getElementById('s-receiptNoteBranch').value = s.receiptNoteBranch || '';
   document.getElementById('s-receiptNoteFooter').value = s.receiptNoteFooter || '';
   pendingLogoBase64 = s.logoBase64 || '';
@@ -3106,20 +3319,6 @@ document.getElementById('saveReceiptDesignBtn').addEventListener('click', async 
     if(pendingLogoBase64){ logoEl.src = pendingLogoBase64; logoEl.style.display='block'; }
     else { logoEl.style.display='none'; }
     showToast('تم حفظ تصميم الفاتورة');
-  }catch(e){
-    showToast('صار خطأ: '+readableError(e));
-  }
-});
-
-document.getElementById('saveAiSettingsBtn').addEventListener('click', async ()=>{
-  const key = document.getElementById('s-aiApiKey').value.trim();
-  const model = document.getElementById('s-aiModel').value.trim() || 'claude-3-5-haiku-20241022';
-  try{
-    const {error} = await sb.from('stores').update({ai_api_key:key, ai_model:model}).eq('id', currentUser.storeId);
-    if(error) throw error;
-    data.settings.aiApiKey = key;
-    data.settings.aiModel = model;
-    showToast('تم حفظ إعدادات المساعد الذكي');
   }catch(e){
     showToast('صار خطأ: '+readableError(e));
   }
@@ -3223,7 +3422,6 @@ function renderCategoriesTable(){
   }
   body.innerHTML = data.categories.map(c=>`
     <tr data-id="${c.id}">
-      <td style="font-size:20px;">${c.icon||'📦'}</td>
       <td>${c.name}</td>
       <td style="white-space:nowrap;">
         <button class="icon-btn edit-category-btn" title="تعديل">
@@ -3260,10 +3458,7 @@ function openCategoryModal(cat){
   const modal = document.getElementById('modalBody');
   modal.innerHTML = `
     <h3>${isEdit?'تعديل فئة':'إضافة فئة جديدة'}</h3>
-    <div class="field-row">
-      <div class="field" style="flex:0 0 90px;"><label>أيقونة</label><input id="f-catIcon" value="${isEdit?cat.icon||'📦':'📦'}" maxlength="4" style="text-align:center;font-size:20px;"></div>
-      <div class="field"><label>اسم الفئة</label><input id="f-catName" value="${isEdit?cat.name:''}" placeholder="مثال: مشروبات ساخنة"></div>
-    </div>
+    <div class="field"><label>اسم الفئة</label><input id="f-catName" value="${isEdit?cat.name:''}" placeholder="مثال: مشروبات ساخنة"></div>
     <div class="modal-actions">
       <button class="btn-cancel" id="modalCancel">إلغاء</button>
       <button class="btn-save" id="modalSave">${isEdit?'حفظ':'إضافة'}</button>
@@ -3273,22 +3468,21 @@ function openCategoryModal(cat){
   document.getElementById('modalCancel').addEventListener('click', closeModal);
   document.getElementById('modalSave').addEventListener('click', async ()=>{
     const name = document.getElementById('f-catName').value.trim();
-    const icon = document.getElementById('f-catIcon').value.trim() || '📦';
     if(!name){ showToast('يرجى إدخال اسم الفئة'); return; }
     if(isEdit){
       const oldName = cat.name;
-      const {error} = await sb.from('categories').update({name, icon}).eq('id', cat.id);
+      const {error} = await sb.from('categories').update({name}).eq('id', cat.id);
       if(error){ showToast('صار خطأ: '+error.message); return; }
-      Object.assign(cat, {name, icon});
+      Object.assign(cat, {name});
       if(oldName!==name){
         // Keep existing products in sync with the renamed category.
         await sb.from('products').update({category:name}).eq('store_id', currentUser.storeId).eq('category', oldName);
         data.products.forEach(p=>{ if(p.category===oldName) p.category = name; });
       }
     } else {
-      const {data:newCat, error} = await sb.from('categories').insert({store_id:currentUser.storeId, name, icon}).select().single();
+      const {data:newCat, error} = await sb.from('categories').insert({store_id:currentUser.storeId, name}).select().single();
       if(error){ showToast('صار خطأ: '+error.message); return; }
-      data.categories.push({id:newCat.id, name:newCat.name, icon:newCat.icon});
+      data.categories.push({id:newCat.id, name:newCat.name});
     }
     closeModal();
     renderCategoriesTable();
@@ -3487,150 +3681,10 @@ document.addEventListener('click', e=>{
   if(wrap && !wrap.contains(e.target)) document.getElementById('supportMenu').classList.remove('show');
 });
 
-const AI_SYSTEM_PROMPT = `أنت مساعد ذكي داخل نظام "أنجاز" لإدارة الكاشير والمخزون. مهمتك تساعد المستخدم (صاحب متجر أو موظف) يفهم كيف يستخدم النظام. رد دايمًا بالعربية، بإيجاز ووضوح.
-
-أقسام النظام المتاحة:
-- الكاشير (POS): بحث عن منتج بالاسم أو الباركود (يدعم قارئ باركود تلقائي)، إضافة للسلة، خصم، ضريبة قيمة مضافة قابلة للتفعيل/الإيقاف، طرق دفع (نقدًا/شبكة)، ربط فاتورة بزبون عبر إيميله (يتعرف تلقائيًا لو موجود من قبل)، حفظ فاتورة كـ"طلب معلّق" والرجوع له لاحقًا (يُحفظ بجهاز الكاشير نفسه فقط)، طباعة الفاتورة (تلقائيًا لو فيه طابعة حرارية متصلة عبر USB أو بلوتوث، أو عبر نافذة طباعة عادية).
-- المخزون: إضافة/تعديل/حذف منتجات (اسم، فئة، باركود، سعر بيع، تكلفة، كمية)، تعديل الكمية مباشرة بأزرار +/-.
-- الجرد: بدء جلسة جرد تعرض كل المنتجات، تدخل الكمية الفعلية لكل صنف، يطلع الفرق فورًا (نقص/زيادة)، وعند الإنهاء يحدّث المخزون ويحفظ سجل الجرد بالتاريخ.
-- العملاء: كل عميل له بريد إلكتروني وفرع وموقع ورصيد مستحق (دين)، تقدر تسجّل دفعات تسديد، وتشوف سجل كامل لكل عملياته.
-- التقارير: مبيعات اليوم/آخر 7 أيام/الكل/تاريخ محدد، أكثر منتج مبيعًا، رسم بياني لآخر 7 أيام، تفصيل الإيراد حسب الفرع (لو فيه أكثر من فرع).
-- الفروع: كل فرع له اسم وموقع، وفيه فرع "نشط" تختاره من الأعلى وترتبط فيه كل فاتورة تسويها.
-- المستخدمين: 3 صلاحيات - مدير (يشوف كل شي)، مشرف (كاشير+مخزون+جرد بس)، كاشير (شاشة الكاشير بس). المدير يقدر يضيف موظفين من صفحة "المستخدمين".
-- الإعدادات: معلومات المتجر (الاسم، الرقم الضريبي يظهر بالفاتورة مع رمز QR متوافق مع الفوترة الإلكترونية المبسّطة لهيئة الزكاة - مرحلة أولى بس)، إدارة الفروع، ربط طابعة حرارية (USB/بلوتوث، لازم تتصل من كل جهاز كاشير لحاله)، وإعدادات المساعد الذكي هذا.
-- وضع الطوارئ: لو انقطع النت أثناء الشغل، الكاشير يكمل يبيع عادي والفواتير تتحفظ بالجهاز وترفع تلقائيًا لما يرجع النت (لازم نت أول مرة تسجّل دخول).
-- الدعم الفني: واتساب 0509749811.
-
-لو سُئلت عن شي مو موجود بالنظام، قول بصراحة إنه مو متوفر حاليًا. لا تختلق ميزات غير موجودة.
-
-مهم جدًا: أنت مخصص فقط للإجابة عن أسئلة تخص نظام أنجاز (الكاشير والمخزون) وكيفية استخدامه. لو المستخدم سأل عن أي موضوع عام مالة علاقة بأنجاز (برمجة، أخبار، أسئلة شخصية، مواضيع عامة...)، اعتذر بأدب وذكّره إنك مخصص لمساعدته بنظام أنجاز بس، وما ترد على السؤال العام.`;
-
-function aiHistoryKey(){
-  return 'anjaz-ai-chat-'+(currentUser && currentUser.email ? currentUser.email.toLowerCase() : 'guest');
-}
-function loadAiHistory(){
-  try{ return JSON.parse(localStorage.getItem(aiHistoryKey())||'[]'); }catch(e){ return []; }
-}
-function saveAiHistory(){
-  try{ localStorage.setItem(aiHistoryKey(), JSON.stringify(aiChatHistory)); }catch(e){}
-}
-
-let aiChatHistory = [];
-
 document.getElementById('openAiSupportBtn').addEventListener('click', ()=>{
   document.getElementById('supportMenu').classList.remove('show');
-  if(!data || !data.settings || !data.settings.aiApiKey){
-    showToast('المتجر ما فعّل المساعد الذكي بعد - تواصل عبر واتساب 0509749811');
-    return;
-  }
-  document.getElementById('aiChatPanel').classList.add('show');
-  if(aiChatHistory.length===0){
-    aiChatHistory = loadAiHistory();
-    const wrap = document.getElementById('aiChatMessages');
-    if(aiChatHistory.length===0){
-      addAiMessage('system-note', 'مرحبًا! اسألني عن أي شي بنظام أنجاز.');
-    } else {
-      aiChatHistory.forEach(m=> addAiMessage(m.role==='user'?'user':'assistant', m.content));
-    }
-  }
+  showToast('المساعد الذكي قريبًا 🚀');
 });
-document.getElementById('closeAiChatBtn').addEventListener('click', ()=>{
-  document.getElementById('aiChatPanel').classList.remove('show');
-});
-
-function addAiMessage(role, text){
-  const wrap = document.getElementById('aiChatMessages');
-  const el = document.createElement('div');
-  el.className = 'ai-msg '+role;
-  el.textContent = text;
-  wrap.appendChild(el);
-  wrap.scrollTop = wrap.scrollHeight;
-  return el;
-}
-
-function buildStoreDataSnapshot(){
-  if(!data) return 'ما فيه بيانات محمّلة حاليًا.';
-  const now = new Date();
-  const todaySales = data.sales.filter(s=> new Date(s.date).toDateString()===now.toDateString());
-  const todayTotal = todaySales.reduce((s,x)=>s+x.total,0);
-  const weekSales = data.sales.filter(s=> (now-new Date(s.date)) <= 7*24*3600*1000);
-  const weekTotal = weekSales.reduce((s,x)=>s+x.total,0);
-  const allTotal = data.sales.reduce((s,x)=>s+x.total,0);
-
-  const productCount = {};
-  data.sales.forEach(s=>s.items.forEach(it=>{ productCount[it.name] = (productCount[it.name]||0)+it.qty; }));
-  const topProducts = Object.entries(productCount).sort((a,b)=>b[1]-a[1]).slice(0,5)
-    .map(([name,qty])=>`${name} (${qty} قطعة)`).join('، ') || 'ما فيه مبيعات بعد';
-
-  const lowStock = data.products.filter(p=>p.stock<=5).sort((a,b)=>a.stock-b.stock)
-    .map(p=>`${p.name}: ${p.stock}`).join('، ') || 'ما فيه أصناف قليلة حاليًا';
-
-  const totalDebt = data.customers.reduce((s,c)=>s+Math.max(c.balance,0),0);
-  const topDebtors = data.customers.filter(c=>c.balance>0).sort((a,b)=>b.balance-a.balance).slice(0,5)
-    .map(c=>`${c.name}: ${money(c.balance)} ر.س`).join('، ') || 'ما فيه عملاء عليهم دين حاليًا';
-
-  const activeBranch = data.branches.find(b=>b.id===data.activeBranchId);
-
-  return `بيانات المتجر الحالية (وقت السؤال):
-- مبيعات اليوم: ${money(todayTotal)} ر.س (${todaySales.length} فاتورة)
-- مبيعات آخر 7 أيام: ${money(weekTotal)} ر.س
-- إجمالي كل المبيعات المسجّلة: ${money(allTotal)} ر.س
-- أكثر 5 منتجات مبيعًا: ${topProducts}
-- أصناف كميتها منخفضة (5 أو أقل): ${lowStock}
-- إجمالي الديون المستحقة على العملاء: ${money(totalDebt)} ر.س
-- أكبر 5 عملاء مديونين: ${topDebtors}
-- عدد الفروع: ${data.branches.length}${activeBranch?` - الفرع النشط حاليًا: ${activeBranch.name}`:''}
-- عدد المنتجات المسجّلة: ${data.products.length}
-- عدد العملاء المسجّلين: ${data.customers.length}
-
-استخدم هذي الأرقام الحقيقية لما تجاوب على أسئلة عن أداء المتجر أو تحليل المبيعات أو المخزون. لو سُئلت عن رقم مو موجود هنا، قول إنك ما تقدر تشوفه من هذا الملخص.`;
-}
-
-async function sendAiMessage(){
-  const input = document.getElementById('aiChatInput');
-  const text = input.value.trim();
-  if(!text) return;
-  input.value = '';
-  addAiMessage('user', text);
-  aiChatHistory.push({role:'user', content:text});
-  saveAiHistory();
-  const loadingEl = addAiMessage('assistant', '...');
-
-  try{
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{
-        'content-type':'application/json',
-        'x-api-key': data.settings.aiApiKey,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
-      body: JSON.stringify({
-        model: data.settings.aiModel || 'claude-3-5-haiku-20241022',
-        max_tokens: 500,
-        system: AI_SYSTEM_PROMPT,
-        messages: aiChatHistory
-      })
-    });
-    const json = await res.json();
-    if(!res.ok){
-      loadingEl.textContent = 'صار خطأ: '+(json.error?.message || 'تأكد من صحة مفتاح API بالإعدادات');
-      aiChatHistory.pop();
-      saveAiHistory();
-      return;
-    }
-    const replyText = (json.content||[]).map(b=>b.text||'').join('').trim() || 'ما قدرت أرد، جرب مرة ثانية.';
-    loadingEl.textContent = replyText;
-    aiChatHistory.push({role:'assistant', content:replyText});
-    saveAiHistory();
-  }catch(e){
-    loadingEl.textContent = 'تعذّر الاتصال بالمساعد الذكي: '+readableError(e);
-    aiChatHistory.pop();
-    saveAiHistory();
-  }
-}
-document.getElementById('aiChatSendBtn').addEventListener('click', sendAiMessage);
-document.getElementById('aiChatInput').addEventListener('keydown', e=>{ if(e.key==='Enter') sendAiMessage(); });
 
 /* ---------- Init ---------- */
 (async function init(){
