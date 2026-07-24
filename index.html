@@ -419,11 +419,21 @@ table.datatable tr:hover td{background:#FBFAF5;}
     </button>
     <div class="login-tabs" id="loginTabs">
       <button class="active" data-tab="login">تسجيل الدخول</button>
-      <button data-tab="signup">حساب مدير جديد</button>
+      <button data-tab="signup">إنشاءحساب جديد</button>
     </div>
     <div class="field"><label>البريد الإلكتروني</label><input id="loginEmail" type="email" placeholder="name@store.com"></div>
     <div class="field" id="loginNameField" style="display:none;"><label>اسمك</label><input id="loginName" placeholder="مثال: خالد"></div>
     <div class="field" id="loginStoreField" style="display:none;"><label>اسم المتجر</label><input id="loginStoreName" placeholder="مثال: أنجاز للتجارة"></div>
+    <div class="field" id="loginBusinessTypeField" style="display:none;"><label>نوع النشاط</label>
+      <select id="loginBusinessType">
+        <option value="مقهى">مقهى</option>
+        <option value="بقالة">بقالة</option>
+        <option value="مطعم">مطعم</option>
+        <option value="ملابس">ملابس</option>
+        <option value="صيدلية">صيدلية</option>
+        <option value="أخرى">أخرى</option>
+      </select>
+    </div>
     <div class="field"><label>كلمة المرور</label><input id="loginPass" type="password" placeholder="••••••••"></div>
     <div class="login-error" id="loginError"></div>
     <button class="login-btn" id="loginBtn">دخول</button>
@@ -509,6 +519,7 @@ table.datatable tr:hover td{background:#FBFAF5;}
         <div class="receipt-wrap">
           <div class="receipt">
             <div class="receipt-header">
+              <img id="receiptLogo" style="display:none;max-width:60px;max-height:60px;margin:0 auto 6px;border-radius:6px;">
               <div class="store" id="receiptStoreName">أنجاز للتجارة</div>
               <div class="sub" id="receiptVatNumber" style="display:none;"></div>
               <div class="sub">فاتورة رقم <span id="invoiceNo">1</span></div>
@@ -708,6 +719,50 @@ table.datatable tr:hover td{background:#FBFAF5;}
         </p>
       </div>
 
+      <div class="section-head"><h2>شعار وتصميم الفاتورة</h2></div>
+      <div class="chart-card">
+        <div class="field-row" style="align-items:flex-end;">
+          <div class="field" style="flex:2;">
+            <label>شعار المتجر (يظهر أعلى الفاتورة)</label>
+            <input type="file" id="s-logoInput" accept="image/*">
+          </div>
+          <div class="field" style="flex:0 0 90px;text-align:center;">
+            <img id="s-logoPreviewImg" style="display:none;max-width:80px;max-height:80px;border-radius:8px;border:1px solid var(--paper-line);">
+            <button type="button" class="clear-btn" id="removeLogoBtn" style="display:none;margin-top:4px;">إزالة الشعار</button>
+          </div>
+        </div>
+        <div class="field"><label>نص إضافي تحت اسم الفرع بالفاتورة (اختياري)</label><input id="s-receiptNoteBranch" placeholder="مثال: نتمنى لكم يوم سعيد"></div>
+        <div class="field"><label>نص إضافي فوق رمز QR بالفاتورة (اختياري)</label><input id="s-receiptNoteFooter" placeholder="مثال: تابعونا @storename"></div>
+        <button class="btn-primary" id="saveReceiptDesignBtn" style="justify-content:center;">حفظ تصميم الفاتورة</button>
+
+        <div style="margin-top:22px;">
+          <div class="chart-title">معاينة الفاتورة (تتحدّث مباشرة بدون طباعة)</div>
+          <div style="display:flex;justify-content:center;background:var(--paper-2);border-radius:14px;padding:22px 10px;">
+            <div class="receipt" style="width:280px;box-shadow:var(--shadow);">
+              <div class="receipt-header">
+                <img id="previewLogo" style="display:none;max-width:70px;max-height:70px;margin:0 auto 8px;border-radius:8px;">
+                <div class="store" id="previewStoreName">اسم المتجر</div>
+                <div class="sub" id="previewVatNumber" style="display:none;"></div>
+                <div class="sub">فاتورة رقم 1</div>
+                <div class="sub" id="previewBranchLine">الفرع: الفرع الرئيسي</div>
+                <div class="sub" id="previewNoteBranch" style="display:none;color:var(--emerald);"></div>
+              </div>
+              <div class="receipt-dash"></div>
+              <div class="totals-row"><span>قهوة عربية × 2</span><span>24.00</span></div>
+              <div class="totals-row"><span>كنافة بالجبن × 1</span><span>18.00</span></div>
+              <div class="receipt-dash"></div>
+              <div class="totals-row"><span>المجموع الفرعي</span><span>42.00</span></div>
+              <div class="totals-row"><span>ضريبة القيمة المضافة</span><span>6.30</span></div>
+              <div class="totals-row grand"><span>الإجمالي</span><span>48.30 ر.س</span></div>
+              <div class="receipt-dash"></div>
+              <div class="sub" id="previewNoteFooter" style="display:none;text-align:center;color:var(--emerald);margin-bottom:8px;"></div>
+              <div style="width:80px;height:80px;background:repeating-linear-gradient(45deg,var(--ink),var(--ink) 3px,#fff 3px,#fff 6px);margin:0 auto;border-radius:6px;opacity:.8;"></div>
+              <div class="sub" style="text-align:center;margin-top:6px;">رمز QR (زكاة)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="section-head"><h2>الفروع</h2>
         <button class="btn-primary" id="addBranchBtn">
           <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 5v14M5 12h14"/></svg>
@@ -717,6 +772,17 @@ table.datatable tr:hover td{background:#FBFAF5;}
       <table class="datatable" style="margin-bottom:26px;">
         <thead><tr><th>اسم الفرع</th><th>الموقع</th><th></th></tr></thead>
         <tbody id="branchesBody"></tbody>
+      </table>
+
+      <div class="section-head"><h2>فئات المنتجات</h2>
+        <button class="btn-primary" id="addCategoryBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 5v14M5 12h14"/></svg>
+          إضافة فئة
+        </button>
+      </div>
+      <table class="datatable" style="margin-bottom:26px;">
+        <thead><tr><th>الأيقونة</th><th>اسم الفئة</th><th></th></tr></thead>
+        <tbody id="categoriesBody"></tbody>
       </table>
 
       <div class="section-head"><h2>المساعد الذكي (اختياري)</h2></div>
@@ -815,7 +881,23 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const LOCAL_PREFS_KEY = 'anjaz-local-prefs-v1'; // device-only prefs: vat toggle, active branch, printer width
 
-const CATEGORY_ICONS = {'مشروبات':'☕','مأكولات':'🍔','بقالة':'🛒','حلويات':'🍰','أخرى':'📦'};
+const BUSINESS_TYPE_CATEGORIES = {
+  'مقهى': [['قهوة','☕'],['مشروبات باردة','🥤'],['حلويات','🍰'],['مخبوزات','🥐']],
+  'بقالة': [['مواد غذائية','🛒'],['خضروات وفواكه','🥦'],['ألبان','🧀'],['منظفات','🧴'],['مشروبات','🥤']],
+  'مطعم': [['مقبلات','🥗'],['أطباق رئيسية','🍽️'],['مشروبات','🥤'],['حلويات','🍰']],
+  'ملابس': [['رجالي','👔'],['نسائي','👗'],['أطفال','👶'],['إكسسوارات','👜']],
+  'صيدلية': [['أدوية','💊'],['مستحضرات تجميل','💄'],['مستلزمات أطفال','🍼'],['فيتامينات','🧃']],
+  'أخرى': [['منتجات','📦']]
+};
+async function seedCategories(storeId, businessType){
+  const list = BUSINESS_TYPE_CATEGORIES[businessType] || BUSINESS_TYPE_CATEGORIES['أخرى'];
+  const rows = list.map(([name,icon])=>({store_id:storeId, name, icon}));
+  try{
+    const {data:inserted, error} = await sb.from('categories').insert(rows).select();
+    if(error) throw error;
+    return (inserted||[]).map(c=>({id:c.id, name:c.name, icon:c.icon}));
+  }catch(e){ return []; }
+}
 
 let data = null;
 let cart = [];
@@ -964,7 +1046,7 @@ setInterval(refreshStoreStatus, 30000);
 
 function defaultData(){
   return {
-    products:[], sales:[], customers:[], ledger:[], heldOrders:[], users:[],
+    products:[], sales:[], customers:[], ledger:[], heldOrders:[], users:[], categories:[],
     vatEnabled:true,
     branches:[],
     settings:{storeName:'', vatNumber:'', crNumber:'', phone:'', address:'', printerWidth:384},
@@ -985,16 +1067,20 @@ async function loadStoreData(){
     address: currentStore.address || '',
     printerWidth: 384,
     aiApiKey: currentStore.ai_api_key || '',
-    aiModel: currentStore.ai_model || 'claude-3-5-haiku-20241022'
+    aiModel: currentStore.ai_model || 'claude-3-5-haiku-20241022',
+    logoBase64: currentStore.logo_base64 || '',
+    receiptNoteBranch: currentStore.receipt_note_branch || '',
+    receiptNoteFooter: currentStore.receipt_note_footer || ''
   };
 
-  const [branchesRes, productsRes, customersRes, salesRes, ledgerRes, profilesRes] = await Promise.all([
+  const [branchesRes, productsRes, customersRes, salesRes, ledgerRes, profilesRes, categoriesRes] = await Promise.all([
     sb.from('branches').select('*').eq('store_id', storeId).order('created_at'),
     sb.from('products').select('*').eq('store_id', storeId).order('created_at'),
     sb.from('customers').select('*').eq('store_id', storeId).order('created_at'),
     sb.from('sales').select('*').eq('store_id', storeId).order('number'),
     sb.from('ledger').select('*').eq('store_id', storeId).order('created_at'),
-    sb.from('profiles').select('*').eq('store_id', storeId).order('created_at')
+    sb.from('profiles').select('*').eq('store_id', storeId).order('created_at'),
+    sb.from('categories').select('*').eq('store_id', storeId).order('created_at')
   ]);
 
   data.branches = (branchesRes.data||[]).map(b=>({id:b.id, name:b.name, location:b.location}));
@@ -1008,6 +1094,12 @@ async function loadStoreData(){
   data.ledger = (ledgerRes.data||[]).map(mapLedgerRow);
   data.heldOrders = loadLocalHeldOrders();
   data.users = (profilesRes.data||[]).map(p=>({id:p.id, name:p.name, email:p.email, role:p.role}));
+  data.categories = (categoriesRes.data||[]).map(c=>({id:c.id, name:c.name, icon:c.icon||'📦'}));
+  if(data.categories.length===0){
+    // Older stores (created before categories existed) - seed a generic default set once.
+    const seeded = await seedCategories(storeId, 'أخرى');
+    data.categories = seeded;
+  }
 
   const prefs = loadLocalPrefs();
   data.vatEnabled = prefs.vatEnabled !== undefined ? prefs.vatEnabled : true;
@@ -1074,6 +1166,7 @@ function setLoginMode(mode){
   document.querySelectorAll('#loginTabs button').forEach(b=>b.classList.toggle('active', b.dataset.tab===mode));
   document.getElementById('loginNameField').style.display = mode==='signup' ? 'block' : 'none';
   document.getElementById('loginStoreField').style.display = mode==='signup' ? 'block' : 'none';
+  document.getElementById('loginBusinessTypeField').style.display = mode==='signup' ? 'block' : 'none';
   document.getElementById('loginBtn').textContent = mode==='signup' ? 'إنشاء حساب مدير' : 'دخول';
   document.getElementById('loginError').style.display = 'none';
 }
@@ -1140,6 +1233,8 @@ document.getElementById('loginBtn').addEventListener('click', async ()=>{
       if(storeErr){ showLoginError('صار خطأ بإنشاء المتجر: '+readableError(storeErr)); btn.disabled=false; return; }
       const {error:profErr} = await sb.from('profiles').insert({id:signUpData.user.id, store_id:newStore.id, name, role:'admin', email});
       if(profErr){ showLoginError('صار خطأ بإنشاء الحساب: '+readableError(profErr)); btn.disabled=false; return; }
+      const businessType = document.getElementById('loginBusinessType').value;
+      await seedCategories(newStore.id, businessType);
       await loadSessionAndEnter();
     } else {
       const {error} = await sb.auth.signInWithPassword({email, password:pass});
@@ -1200,6 +1295,9 @@ function enterApp(){
   const vatEl = document.getElementById('receiptVatNumber');
   if(data.settings.vatNumber){ vatEl.style.display='block'; vatEl.textContent = 'الرقم الضريبي: '+data.settings.vatNumber; }
   else { vatEl.style.display='none'; }
+  const logoEl = document.getElementById('receiptLogo');
+  if(data.settings.logoBase64){ logoEl.src = data.settings.logoBase64; logoEl.style.display='block'; }
+  else { logoEl.style.display='none'; }
   renderActiveBranchSelect();
   renderCategoryChips();
   renderCart();
@@ -1528,7 +1626,7 @@ function renderProductGrid(){
     return;
   }
   grid.innerHTML = list.map(p=>{
-    const emoji = CATEGORY_ICONS[p.category] || '📦';
+    const emoji = (data.categories.find(c=>c.name===p.category)||{}).icon || '📦';
     const low = p.stock <= 5;
     const outOfStock = p.stock <= 0;
     return `<div class="pcard ${outOfStock?'disabled':''}" data-id="${p.id}">
@@ -2181,6 +2279,7 @@ function buildReceiptCanvas(sale, qrImgSrc, callback){
   if(s.address) lines.push({text:s.address, size:15, center:true});
   lines.push({text:'فاتورة رقم #'+sale.number+' - '+dateStr, size:14, center:true});
   if(sale.branchName) lines.push({text:'الفرع: '+sale.branchName, size:14, center:true});
+  if(s.receiptNoteBranch) lines.push({text:s.receiptNoteBranch, size:13, center:true});
   if(sale.customerName) lines.push({text:'الزبون: '+sale.customerName, size:14, center:true});
   lines.push({dash:true});
   sale.items.forEach(it=>{
@@ -2198,6 +2297,7 @@ function buildReceiptCanvas(sale, qrImgSrc, callback){
   else if(sale.changeGiven>0) lines.push({row:['المرتجع للزبون', money(sale.changeGiven)+' ر.س'], size:15});
   lines.push({dash:true});
   lines.push({text:'شكرًا لتعاملكم معنا', size:15, center:true});
+  if(s.receiptNoteFooter) lines.push({text:s.receiptNoteFooter, size:13, center:true});
 
   const cw = widthDots*scale;
   const padX = 10*scale;
@@ -2364,10 +2464,12 @@ function printReceipt(sale){
   ].filter(Boolean).map(line=>`<div class="print-sub">${line}</div>`).join('');
 
   const buildHtml = (qrSrc)=>`
+    ${s.logoBase64?`<div style="text-align:center;"><img src="${s.logoBase64}" style="max-width:80px;max-height:80px;margin-bottom:8px;"></div>`:''}
     <div class="print-store">${s.storeName || 'المتجر'}</div>
     ${storeInfoLines}
     <div class="print-sub">فاتورة رقم #${sale.number} - ${dateStr}</div>
     ${sale.branchName?`<div class="print-sub">الفرع: ${sale.branchName}</div>`:''}
+    ${s.receiptNoteBranch?`<div class="print-sub">${s.receiptNoteBranch}</div>`:''}
     ${sale.customerName?`<div class="print-sub">الزبون: ${sale.customerName}</div>`:''}
     <div class="print-dash"></div>
     ${itemsRows}
@@ -2382,6 +2484,7 @@ function printReceipt(sale){
     ${dueRow}
     <div class="print-dash"></div>
     <div class="print-sub" style="margin-top:10px;">شكرًا لتعاملكم معنا</div>
+    ${s.receiptNoteFooter?`<div class="print-sub" style="margin-top:4px;">${s.receiptNoteFooter}</div>`:''}
     ${qrSrc?`<div class="print-qr"><img src="${qrSrc}"></div>`:''}
   `;
 
@@ -2540,7 +2643,7 @@ function openProductModal(product){
     <div class="field-row">
       <div class="field"><label>الفئة</label>
         <select id="f-category">
-          ${['مشروبات','مأكولات','بقالة','حلويات','أخرى'].map(c=>`<option ${isEdit&&product.category===c?'selected':''}>${c}</option>`).join('')}
+          ${data.categories.map(c=>`<option ${isEdit&&product.category===c.name?'selected':''}>${c.name}</option>`).join('') || '<option>أخرى</option>'}
         </select>
       </div>
       <div class="field"><label>الباركود</label><input id="f-barcode" value="${isEdit?product.barcode||'':''}" placeholder="1009"></div>
@@ -2549,7 +2652,10 @@ function openProductModal(product){
       <div class="field"><label>سعر البيع (ر.س)</label><input id="f-price" type="number" min="0" step="0.01" value="${isEdit?product.price:''}"></div>
       <div class="field"><label>سعر التكلفة (ر.س)</label><input id="f-cost" type="number" min="0" step="0.01" value="${isEdit?product.cost:''}"></div>
     </div>
-    <div class="field"><label>الكمية في المخزون</label><input id="f-stock" type="number" min="0" value="${isEdit?product.stock:''}"></div>
+    <div class="field-row">
+      <div class="field"><label>الكمية في المخزون</label><input id="f-stock" type="number" min="0" value="${isEdit?product.stock:''}"></div>
+      <div class="field"><label>تاريخ الصلاحية (اختياري)</label><input id="f-expiry" type="date" value="${isEdit&&product.expiry_date?product.expiry_date:''}"></div>
+    </div>
     <div class="modal-actions">
       <button class="btn-cancel" id="modalCancel">إلغاء</button>
       <button class="btn-save" id="modalSave">${isEdit?'حفظ التعديلات':'إضافة المنتج'}</button>
@@ -2564,18 +2670,19 @@ function openProductModal(product){
     const price = parseFloat(document.getElementById('f-price').value)||0;
     const cost = parseFloat(document.getElementById('f-cost').value)||0;
     const stock = parseInt(document.getElementById('f-stock').value)||0;
+    const expiry_date = document.getElementById('f-expiry').value || null;
     if(!name){ showToast('يرجى إدخال اسم المنتج'); return; }
     if(isEdit){
-      const {error} = await sb.from('products').update({name,category,barcode,price,cost,stock}).eq('id', product.id);
+      const {error} = await sb.from('products').update({name,category,barcode,price,cost,stock,expiry_date}).eq('id', product.id);
       if(error){ showToast('صار خطأ: '+error.message); return; }
-      Object.assign(product, {name,category,barcode,price,cost,stock});
+      Object.assign(product, {name,category,barcode,price,cost,stock,expiry_date});
       closeModal();
       renderInventory();
       renderCategoryChips();
       showToast('تم حفظ التعديلات');
     } else {
       const {data:newProd, error} = await sb.from('products').insert({
-        store_id: currentUser.storeId, name,category,barcode,price,cost,stock
+        store_id: currentUser.storeId, name,category,barcode,price,cost,stock,expiry_date
       }).select().single();
       if(error){ showToast('صار خطأ: '+error.message); return; }
       data.products.push(newProd);
@@ -2920,9 +3027,89 @@ function renderSettingsView(){
   document.getElementById('s-printerWidth').value = s.printerWidth || 384;
   document.getElementById('s-aiApiKey').value = s.aiApiKey || '';
   document.getElementById('s-aiModel').value = s.aiModel || 'claude-3-5-haiku-20241022';
+  document.getElementById('s-receiptNoteBranch').value = s.receiptNoteBranch || '';
+  document.getElementById('s-receiptNoteFooter').value = s.receiptNoteFooter || '';
+  pendingLogoBase64 = s.logoBase64 || '';
+  if(pendingLogoBase64){
+    document.getElementById('s-logoPreviewImg').src = pendingLogoBase64;
+    document.getElementById('s-logoPreviewImg').style.display = 'block';
+    document.getElementById('removeLogoBtn').style.display = 'block';
+  } else {
+    document.getElementById('s-logoPreviewImg').style.display = 'none';
+    document.getElementById('removeLogoBtn').style.display = 'none';
+  }
   renderBranchesTable();
+  renderCategoriesTable();
   refreshPrinterStatusUI();
+  updateReceiptPreview();
 }
+
+let pendingLogoBase64 = '';
+document.getElementById('s-logoInput').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  if(file.size > 800*1024){ showToast('حجم الصورة كبير - اختر شعار أصغر من 800 كيلوبايت'); return; }
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    pendingLogoBase64 = reader.result;
+    document.getElementById('s-logoPreviewImg').src = pendingLogoBase64;
+    document.getElementById('s-logoPreviewImg').style.display = 'block';
+    document.getElementById('removeLogoBtn').style.display = 'block';
+    updateReceiptPreview();
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById('removeLogoBtn').addEventListener('click', ()=>{
+  pendingLogoBase64 = '';
+  document.getElementById('s-logoInput').value = '';
+  document.getElementById('s-logoPreviewImg').style.display = 'none';
+  document.getElementById('removeLogoBtn').style.display = 'none';
+  updateReceiptPreview();
+});
+
+function updateReceiptPreview(){
+  const name = document.getElementById('s-storeName').value.trim() || 'اسم المتجر';
+  const vat = document.getElementById('s-vatNumber').value.trim();
+  const noteBranch = document.getElementById('s-receiptNoteBranch').value.trim();
+  const noteFooter = document.getElementById('s-receiptNoteFooter').value.trim();
+  const activeBranch = data.branches.find(b=>b.id===data.activeBranchId);
+
+  document.getElementById('previewStoreName').textContent = name;
+  const vatEl = document.getElementById('previewVatNumber');
+  if(vat){ vatEl.style.display='block'; vatEl.textContent = 'الرقم الضريبي: '+vat; } else { vatEl.style.display='none'; }
+  document.getElementById('previewBranchLine').textContent = 'الفرع: '+(activeBranch?activeBranch.name:'الفرع الرئيسي');
+  const noteBranchEl = document.getElementById('previewNoteBranch');
+  if(noteBranch){ noteBranchEl.style.display='block'; noteBranchEl.textContent = noteBranch; } else { noteBranchEl.style.display='none'; }
+  const noteFooterEl = document.getElementById('previewNoteFooter');
+  if(noteFooter){ noteFooterEl.style.display='block'; noteFooterEl.textContent = noteFooter; } else { noteFooterEl.style.display='none'; }
+  const logoEl = document.getElementById('previewLogo');
+  if(pendingLogoBase64){ logoEl.src = pendingLogoBase64; logoEl.style.display='block'; } else { logoEl.style.display='none'; }
+}
+['s-storeName','s-vatNumber','s-receiptNoteBranch','s-receiptNoteFooter'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', updateReceiptPreview);
+});
+
+document.getElementById('saveReceiptDesignBtn').addEventListener('click', async ()=>{
+  const receiptNoteBranch = document.getElementById('s-receiptNoteBranch').value.trim();
+  const receiptNoteFooter = document.getElementById('s-receiptNoteFooter').value.trim();
+  try{
+    const {error} = await sb.from('stores').update({
+      logo_base64: pendingLogoBase64 || null,
+      receipt_note_branch: receiptNoteBranch,
+      receipt_note_footer: receiptNoteFooter
+    }).eq('id', currentUser.storeId);
+    if(error) throw error;
+    data.settings.logoBase64 = pendingLogoBase64;
+    data.settings.receiptNoteBranch = receiptNoteBranch;
+    data.settings.receiptNoteFooter = receiptNoteFooter;
+    const logoEl = document.getElementById('receiptLogo');
+    if(pendingLogoBase64){ logoEl.src = pendingLogoBase64; logoEl.style.display='block'; }
+    else { logoEl.style.display='none'; }
+    showToast('تم حفظ تصميم الفاتورة');
+  }catch(e){
+    showToast('صار خطأ: '+readableError(e));
+  }
+});
 
 document.getElementById('saveAiSettingsBtn').addEventListener('click', async ()=>{
   const key = document.getElementById('s-aiApiKey').value.trim();
@@ -3024,6 +3211,90 @@ function openBranchModal(branch){
     renderBranchesTable();
     renderActiveBranchSelect();
     showToast(isEdit?'تم حفظ الفرع':'تمت إضافة الفرع');
+  });
+}
+
+/* ---------- Categories ---------- */
+function renderCategoriesTable(){
+  const body = document.getElementById('categoriesBody');
+  if(data.categories.length===0){
+    body.innerHTML = `<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--muted)">ما فيه فئات بعد.</td></tr>`;
+    return;
+  }
+  body.innerHTML = data.categories.map(c=>`
+    <tr data-id="${c.id}">
+      <td style="font-size:20px;">${c.icon||'📦'}</td>
+      <td>${c.name}</td>
+      <td style="white-space:nowrap;">
+        <button class="icon-btn edit-category-btn" title="تعديل">
+          <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </button>
+        <button class="icon-btn danger del-category-btn" title="حذف">
+          <svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+        </button>
+      </td>
+    </tr>
+  `).join('');
+  body.querySelectorAll('tr').forEach(row=>{
+    const id = row.dataset.id;
+    const cat = data.categories.find(c=>c.id===id);
+    row.querySelector('.edit-category-btn').addEventListener('click', ()=>openCategoryModal(cat));
+    row.querySelector('.del-category-btn').addEventListener('click', async ()=>{
+      if(data.products.some(p=>p.category===cat.name)){
+        showToast('ما تقدر تحذف فئة فيها منتجات - غيّر فئة المنتجات أول');
+        return;
+      }
+      const {error} = await sb.from('categories').delete().eq('id', id);
+      if(error){ showToast('صار خطأ: '+error.message); return; }
+      data.categories = data.categories.filter(c=>c.id!==id);
+      renderCategoriesTable();
+      showToast('تم حذف الفئة');
+    });
+  });
+}
+
+document.getElementById('addCategoryBtn').addEventListener('click', ()=>openCategoryModal(null));
+
+function openCategoryModal(cat){
+  const isEdit = !!cat;
+  const modal = document.getElementById('modalBody');
+  modal.innerHTML = `
+    <h3>${isEdit?'تعديل فئة':'إضافة فئة جديدة'}</h3>
+    <div class="field-row">
+      <div class="field" style="flex:0 0 90px;"><label>أيقونة</label><input id="f-catIcon" value="${isEdit?cat.icon||'📦':'📦'}" maxlength="4" style="text-align:center;font-size:20px;"></div>
+      <div class="field"><label>اسم الفئة</label><input id="f-catName" value="${isEdit?cat.name:''}" placeholder="مثال: مشروبات ساخنة"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="modalCancel">إلغاء</button>
+      <button class="btn-save" id="modalSave">${isEdit?'حفظ':'إضافة'}</button>
+    </div>
+  `;
+  document.getElementById('modalOverlay').classList.add('show');
+  document.getElementById('modalCancel').addEventListener('click', closeModal);
+  document.getElementById('modalSave').addEventListener('click', async ()=>{
+    const name = document.getElementById('f-catName').value.trim();
+    const icon = document.getElementById('f-catIcon').value.trim() || '📦';
+    if(!name){ showToast('يرجى إدخال اسم الفئة'); return; }
+    if(isEdit){
+      const oldName = cat.name;
+      const {error} = await sb.from('categories').update({name, icon}).eq('id', cat.id);
+      if(error){ showToast('صار خطأ: '+error.message); return; }
+      Object.assign(cat, {name, icon});
+      if(oldName!==name){
+        // Keep existing products in sync with the renamed category.
+        await sb.from('products').update({category:name}).eq('store_id', currentUser.storeId).eq('category', oldName);
+        data.products.forEach(p=>{ if(p.category===oldName) p.category = name; });
+      }
+    } else {
+      const {data:newCat, error} = await sb.from('categories').insert({store_id:currentUser.storeId, name, icon}).select().single();
+      if(error){ showToast('صار خطأ: '+error.message); return; }
+      data.categories.push({id:newCat.id, name:newCat.name, icon:newCat.icon});
+    }
+    closeModal();
+    renderCategoriesTable();
+    renderInventory();
+    renderCategoryChips();
+    showToast(isEdit?'تم حفظ الفئة':'تمت إضافة الفئة');
   });
 }
 
